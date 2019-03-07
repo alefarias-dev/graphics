@@ -30,7 +30,7 @@ def soma_pixel(valor_pixel, escalar):
     return soma
 
 
-def soma_escalar(img, k)
+def soma_escalar(img, k):
     nova_img = img.copy()
     linhas, colunas, dimensoes = img.shape
     for linha in range(linhas):
