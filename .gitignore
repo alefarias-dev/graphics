@@ -1,2 +1,3 @@
 graphics_env/
 .vscode/
+*.pyc
