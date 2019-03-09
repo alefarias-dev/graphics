@@ -6,15 +6,23 @@ def img2Temp(filename):
     e salva a imagem na pasta temp do projeto
     retorna endereco da imagem e imagem em RGB
     """
-    img = cv2.imread(filename)
+    img = readImage(filename)
     filename = filename.split('/')[-1]
     extension = filename.split('.')[-1]
     new_filename = f'../.temp/original.png'
-    cv2.imwrite(new_filename, img)
-    return new_filename, cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    saveImage(new_filename, img)
+    return new_filename, img
 
 
 def imgClone(filename, new_filename):
-    img = cv2.imread(filename)
-    cv2.imwrite(f'../.temp/{new_filename}', img)
-    return new_filename, cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    img = readImage(filename)
+    saveImage(f'../.temp/{new_filename}', img)
+    return new_filename, img
+
+
+def saveImage(filename, img):
+    cv2.imwrite(filename, cv2.cvtColor(img, cv2.COLOR_RGB2BGR))
+
+
+def readImage(filename):
+    return cv2.cvtColor(cv2.imread(filename), cv2.COLOR_BGR2RGB)

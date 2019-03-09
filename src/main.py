@@ -2,7 +2,7 @@ import sys
 
 from image_processing.filters import clarear, escurecer
 from image_processing.data import histogram
-from util import img2Temp, imgClone
+from util import img2Temp, imgClone, saveImage, readImage
 
 from PySide2 import *
 from PySide2.QtWidgets import *
@@ -61,6 +61,7 @@ class MainWindow(QMainWindow):
         self.escalarClarearText = QLabel("Escalar:")
         self.escalarClarear = QLineEdit()
         self.btnClarear = QPushButton('Clarear')
+        self.btnClarear.clicked.connect(self.clarearWrapper)
         vboxClarear = QVBoxLayout()
         vboxClarear.addWidget(self.escalarClarearText)
         vboxClarear.addWidget(self.escalarClarear)
@@ -72,6 +73,7 @@ class MainWindow(QMainWindow):
         self.escalarEscurecerText = QLabel("Escalar:")
         self.escalarEscurecer = QLineEdit()
         self.btnEscurecer = QPushButton('Escurecer')
+        self.btnEscurecer.clicked.connect(self.escurecerWrapper)
         vboxEscurecer = QVBoxLayout()
         vboxEscurecer.addWidget(self.escalarEscurecerText)
         vboxEscurecer.addWidget(self.escalarEscurecer)
@@ -95,6 +97,18 @@ class MainWindow(QMainWindow):
         widget.setLayout(layout)  # seta o layout a ser usado
         self.setCentralWidget(widget)
 
+    def clarearWrapper(self):
+        escalar = self.escalarClarear.text()
+        img = readImage(FILENAMES['modified'])
+        modified = clarear(img, int(escalar))
+        self.updateModifiedImage(modified)
+
+    def escurecerWrapper(self):
+        escalar = self.escalarEscurecer.text()
+        img = readImage(FILENAMES['modified'])
+        modified = escurecer(img, int(escalar))
+        self.updateModifiedImage(modified)
+
     def openImage(self):
         dialog = QFileDialog()
         dialog.setNameFilter('Images (*.png *.xpm *.jpg)')
@@ -107,16 +121,16 @@ class MainWindow(QMainWindow):
         pixmap = QPixmap(new_filename).scaled(*IMG_SCALE)
         self.imagemOriginal.setPixmap(pixmap)
         self.updateHistogram('hist_original', img)
-        self.resetModifiedImage()
+        self.updateModifiedImage(img)
 
-    def resetModifiedImage(self):
-        _, img = imgClone(self.originalFilename, 'modified.png')
+    def updateModifiedImage(self, img):
+        saveImage(FILENAMES['modified'], img)
         pixmap = QPixmap(FILENAMES['modified']).scaled(*IMG_SCALE)
         self.imagemModificada.setPixmap(pixmap)
         self.updateHistogram('hist_modified', img)
 
-    def updateModifiedImage(self):
-        pass
+    def resetModifiedImage(self):
+       self.updateModifiedImage(readImage(FILENAMES['original']))
 
     def updateHistogram(self, which, img):
         filename = FILENAMES[which]
