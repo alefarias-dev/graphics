@@ -1,12 +1,13 @@
+import sys
+
 from image_processing.filters import clarear, escurecer
 from image_processing.data import histogram
-
+from util import img2Temp
 
 from PySide2 import *
 from PySide2.QtWidgets import *
 from PySide2.QtCore import *
 from PySide2.QtGui import QPixmap
-import sys
 
 
 class MainWindow(QMainWindow):
@@ -27,7 +28,8 @@ class MainWindow(QMainWindow):
 
         # load and reset buttons
         self.btnLoadImage = QPushButton('Carregar imagem...')
-        self.btnResetImage = QPushButton('Resetar imagem...')
+        self.btnLoadImage.clicked.connect(self.openImage)
+        self.btnResetImage = QPushButton('Resetar imagem')
 
         pixmap = QPixmap('../.temp/hist_original.png')
         pixmap = pixmap.scaled(450, 300)
@@ -73,6 +75,18 @@ class MainWindow(QMainWindow):
         widget.setLayout(layout)  # seta o layout a ser usado
 
         self.setCentralWidget(widget)
+
+    def openImage(self):
+        dialog = QFileDialog()
+        dialog.setNameFilter('Images (*.png *.xpm *.jpg)')
+        filename, _ = dialog.getOpenFileName()
+        self.loadImage(filename)
+    
+    def loadImage(self, filename):
+        new_filename = img2Temp(filename)
+        pixmap = QPixmap(new_filename).scaled(450, 300)
+        self.imagemOriginal.setPixmap(pixmap)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
