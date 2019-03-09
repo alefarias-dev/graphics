@@ -31,15 +31,14 @@ def soma_pixel(valor_pixel, escalar):
 
 
 def soma_escalar(img, k):
-    nova_img = img.copy()
     linhas, colunas, dimensoes = img.shape
     for linha in range(linhas):
         for coluna in range(colunas):
-            nova_img[linha, coluna] = [
+            img[linha, coluna] = [
                 soma_pixel(valor, k) 
-                for valor in nova_img[linha, coluna]
+                for valor in img[linha, coluna]
             ]
-    return nova_img
+    return img
 
 
 def clarear(img, k):
