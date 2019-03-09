@@ -16,8 +16,25 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Computer Graphics")
 
         # definicao das imagens
-        self.imagemOriginal   = QLabel()
+        pixmap = QPixmap('../.temp/pardal.jpg')
+        pixmap = pixmap.scaled(450, 300)
+        self.imagemOriginalText = QLabel('Imagem original')
+        self.imagemOriginal = QLabel()
+        self.imagemOriginal.setPixmap(pixmap)
+        self.imagemModificadaText = QLabel('Imagem modificada')
         self.imagemModificada = QLabel()
+        self.imagemModificada.setPixmap(pixmap)
+
+        # load and reset buttons
+        self.btnLoadImage = QPushButton('Carregar imagem...')
+        self.btnResetImage = QPushButton('Resetar imagem...')
+
+        pixmap = QPixmap('../.temp/hist_original.png')
+        pixmap = pixmap.scaled(450, 300)
+        self.histogramaOriginal = QLabel()
+        self.histogramaOriginal.setPixmap(pixmap)
+        self.histogramaModificado = QLabel()
+        self.histogramaModificado.setPixmap(pixmap)
 
         # cria group boxes
         gpClarear = QGroupBox("Filtro Clarear")
@@ -43,8 +60,14 @@ class MainWindow(QMainWindow):
         gpEscurecer.setLayout(vboxEscurecer)
 
         layout = QGridLayout()
-        layout.addWidget(gpClarear, 1, 0)
-        layout.addWidget(gpEscurecer, 1, 1)
+        layout.addWidget(self.imagemOriginal, 0, 0)
+        layout.addWidget(self.btnLoadImage, 1, 0)
+        layout.addWidget(self.histogramaOriginal, 2, 0)
+        layout.addWidget(self.imagemModificada, 0, 1)
+        layout.addWidget(self.btnResetImage, 1, 1)
+        layout.addWidget(self.histogramaModificado, 2, 1)
+        layout.addWidget(gpClarear, 3, 0)
+        layout.addWidget(gpEscurecer, 3, 1)
 
         widget = QWidget()  # nossa widget principal
         widget.setLayout(layout)  # seta o layout a ser usado

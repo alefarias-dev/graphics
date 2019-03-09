@@ -6,8 +6,8 @@
   - [ ] Criar funcao para salvar imagem temporaria dos histogramas da imagem original
   - [ ] Criar funcao para salvar imagem temporaria dos histogramas da imagem modificada
 
-- [ ] Criar arquivo de interface
-  - [ ] Colocar 2 imagens
-  - [ ] Colocar filtro de clarear
-  - [ ] Colocar filtro de escurecer
-  - [ ] Colocar histogramas
+- [x] Criar arquivo de interface
+  - [x] Colocar 2 imagens
+  - [x] Colocar filtro de clarear
+  - [x] Colocar filtro de escurecer
+  - [x] Colocar histogramas
