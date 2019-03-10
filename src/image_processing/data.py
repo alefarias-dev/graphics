@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-
+from io import BytesIO
 
 def histograma_banda(img, b):
     """ recebe uma imagem e um inteiro especificando uma banda,
@@ -14,14 +14,12 @@ def histograma_banda(img, b):
     return hist
 
 
-def histogram(img, filename):
+def histogram(r_hist, g_hist, b_hist):
     """ recebe uma img RGB e retorna
     os subplots de histogramas para cada
     banda
     """
-    r_hist = histograma_banda(img, 0)
-    g_hist = histograma_banda(img, 1)
-    b_hist = histograma_banda(img, 2)
+
     fig, axarr = plt.subplots(3, sharex=True)
     x = list(range(256))
     axarr[0].bar(x, height=r_hist, color='red')
@@ -30,4 +28,9 @@ def histogram(img, filename):
     axarr[1].set_title('Histograma G')
     axarr[2].bar(x, height=b_hist, color='blue')
     axarr[2].set_title('Histograma B')
-    plt.savefig(filename)
+    
+    
+    image_bytes = BytesIO()
+    plt.savefig(image_bytes, format='png', bbox_inches='tight', pad_inches=0)
+
+    return image_bytes.getvalue()
