@@ -98,9 +98,11 @@ class MainWindow(QMainWindow):
 
     def clarear(self):
         self.soma_escalar(abs(int(self.escalarClarear.text())))
+        self.atualiza_histograma()
 
     def escurecer(self):
         self.soma_escalar(-abs(int(self.escalarEscurecer.text())))
+        self.atualiza_histograma()
 
     def soma_escalar(self, valor):
 
@@ -129,7 +131,7 @@ class MainWindow(QMainWindow):
         hist_original = QImage()
         hist_original.loadFromData(bytes_hist_original)
         hist_modificado = QImage()
-        hist_modificado.loadFromData(bytes_hist_original)
+        hist_modificado.loadFromData(bytes_hist_modificado)
 
         pixmap_original = QPixmap(hist_original)
         pixmap_original = pixmap_original.scaled(450, 300)
