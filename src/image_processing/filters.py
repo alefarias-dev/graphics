@@ -1,7 +1,8 @@
 """
 Importante!
 
-Considere a representacao da imagem como se segue
+Considere a representacao da imagem como se segue:
+
 A imagem eh uma lista de listas, cada lista interna eh uma linha
 cada linha possui diferentes listas para cada pixel da imagem, a
 quantidade de listas dentro de uma linha eh a quantidade de colunas
@@ -15,7 +16,7 @@ do seguinte modo:
     [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
 ]
 
-Assuma que todos os filtros recebem uma imagem RGB
+A principio assuma que todos os filtros recebem uma imagem RGB
 """
 
 

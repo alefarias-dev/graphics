@@ -23,12 +23,13 @@ def histogram(img, filename):
     banda
     """
     r_hist, g_hist, b_hist = histograma_bandas(img)
-    fig, axarr = plt.subplots(3, sharex=True)
+    fig, axarr = plt.subplots(3, sharex=True, figsize=(4.26, 3.18))
+    plt.subplots_adjust(hspace=.5)
     x = list(range(256))
     axarr[0].bar(x, height=r_hist, color='red')
-    axarr[0].set_title('Histograma Vermelho')
+    axarr[0].set_title('Histograma Vermelho', fontsize=8)
     axarr[1].bar(x, height=g_hist, color='green')
-    axarr[1].set_title('Histograma Verde')
+    axarr[1].set_title('Histograma Verde', fontsize=8)
     axarr[2].bar(x, height=b_hist, color='blue')
-    axarr[2].set_title('Histograma Azul')
+    axarr[2].set_title('Histograma Azul', fontsize=8)
     plt.savefig(filename)

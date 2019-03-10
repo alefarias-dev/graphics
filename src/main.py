@@ -16,7 +16,7 @@ FILENAMES = {
     'hist_modified': '../.temp/hist_modified.png'
 }
 
-IMG_SCALE = (450, 300)
+IMG_SCALE = (426, 326)
 
 class MainWindow(QMainWindow):
 
