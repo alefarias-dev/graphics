@@ -102,12 +102,14 @@ class MainWindow(QMainWindow):
         img = readImage(FILENAMES['modified'])
         modified = clarear(img, int(escalar))
         self.updateModifiedImage(modified)
+        self.messageBox('Filtro aplicado!')
 
     def escurecerWrapper(self):
         escalar = self.escalarEscurecer.text()
         img = readImage(FILENAMES['modified'])
         modified = escurecer(img, int(escalar))
         self.updateModifiedImage(modified)
+        self.messageBox('Filtro aplicado!')
 
     def openImage(self):
         dialog = QFileDialog()
@@ -122,6 +124,7 @@ class MainWindow(QMainWindow):
         self.imagemOriginal.setPixmap(pixmap)
         self.updateHistogram('hist_original', img)
         self.updateModifiedImage(img)
+        self.messageBox('Imagem carregada!')
 
     def updateModifiedImage(self, img):
         saveImage(FILENAMES['modified'], img)
@@ -131,6 +134,7 @@ class MainWindow(QMainWindow):
 
     def resetModifiedImage(self):
        self.updateModifiedImage(readImage(FILENAMES['original']))
+       self.messageBox('Imagem restaurada!')
 
     def updateHistogram(self, which, img):
         filename = FILENAMES[which]
@@ -140,6 +144,9 @@ class MainWindow(QMainWindow):
             self.histogramaOriginal.setPixmap(pixmap)
             return
         self.histogramaModificado.setPixmap(pixmap)
+
+    def messageBox(self, message):
+        msgBox = QMessageBox().information(self, "Informativo", message)
 
 
 if __name__ == "__main__":
