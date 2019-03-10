@@ -35,7 +35,7 @@ def soma_escalar(img, k):
     for linha in range(linhas):
         for coluna in range(colunas):
             img[linha, coluna] = [
-                soma_pixel(valor, k) 
+                soma_pixel(valor, k)  # soma k em cada valor do pixel
                 for valor in img[linha, coluna]
             ]
     return img

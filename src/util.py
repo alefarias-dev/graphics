@@ -7,21 +7,17 @@ def img2Temp(filename):
     retorna endereco da imagem e imagem em RGB
     """
     img = readImage(filename)
-    filename = filename.split('/')[-1]
-    extension = filename.split('.')[-1]
     new_filename = f'../.temp/original.png'
-    saveImage(new_filename, img)
-    return new_filename, img
+    return saveImage(new_filename, img)
 
 
 def imgClone(filename, new_filename):
-    img = readImage(filename)
-    saveImage(f'../.temp/{new_filename}', img)
-    return new_filename, img
+    return saveImage(f'../.temp/{new_filename}', readImage(filename))
 
 
 def saveImage(filename, img):
     cv2.imwrite(filename, cv2.cvtColor(img, cv2.COLOR_RGB2BGR))
+    return filename, img
 
 
 def readImage(filename):
