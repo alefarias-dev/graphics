@@ -24,7 +24,7 @@ def histogram(img, filename):
     """
     plt.style.use('bmh')
     r_hist, g_hist, b_hist = histograma_bandas(img)
-    fig, axarr = plt.subplots(3, sharex=True, figsize=(4.26, 3.18))
+    fig, axarr = plt.subplots(3, sharex=True, sharey=True, figsize=(4.26, 3.18))
     plt.subplots_adjust(hspace=.5)
     x = list(range(256))
     axarr[0].bar(x, height=r_hist, color='red', alpha=.64, width=1, log=True)
@@ -39,4 +39,4 @@ def histogram(img, filename):
     axarr[2].set_title('Histograma Azul', fontsize=8)
     axarr[2].tick_params(axis='both', which='both', length=0)
     axarr[2].grid(False)
-    plt.savefig(filename, bbox_inches="tight")
+    plt.savefig(filename)
