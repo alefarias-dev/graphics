@@ -14,7 +14,11 @@ def histograma_bandas(img):
             r_hist[img[linha, coluna, 0]] += 1
             g_hist[img[linha, coluna, 1]] += 1
             b_hist[img[linha, coluna, 2]] += 1
-    return r_hist, g_hist, b_hist
+    return normalize(r_hist), normalize(g_hist), normalize(b_hist)
+
+
+def normalize(values):
+    return values
 
 
 def histogram(img, filename):
