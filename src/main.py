@@ -2,7 +2,7 @@ import sys
 
 from image_processing.filters import clarear, escurecer
 from image_processing.data import histogram
-from util import img2Temp, imgClone, saveImage, readImage
+from util import imgClone, saveImage, readImage
 
 from PySide2 import *
 from PySide2.QtWidgets import *
