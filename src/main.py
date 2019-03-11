@@ -136,7 +136,7 @@ class MainWindow(QMainWindow):
         pixmap da imagem original
         """
         self.originalFilename = filename
-        new_filename, img = img2Temp(filename)
+        new_filename, img = imgClone(filename, 'original.png')
         pixmap = QPixmap(new_filename).scaled(*IMG_SCALE)
         self.imagemOriginal.setPixmap(pixmap)
         self.updateHistogram('hist_original', img)
@@ -156,8 +156,8 @@ class MainWindow(QMainWindow):
         """ Desfaz as tranformacoes aplicadas na imagem modificada,
         retornando para o estado da imagem original
         """
-       self.updateModifiedImage(readImage(FILENAMES['original']))
-       self.messageBox('Imagem restaurada!')
+        self.updateModifiedImage(readImage(FILENAMES['original']))
+        self.messageBox('Imagem restaurada!')
 
     def updateHistogram(self, which, img):
         """ Atualiza o histograma de uma imagem,
