@@ -109,6 +109,31 @@ class MainWindow(QMainWindow):
         vboxMediana.addStretch(1)
         gpMediana.setLayout(vboxMediana)
 
+        gpSplitting = QGroupBox("Splitting")
+        self.splittingText = QLabel("Valor:")
+        self.escalarSplitting = QLineEdit()
+        self.btnSplitting = QPushButton('Splitting')
+        self.btnSplitting.clicked.connect(self.splittingWrapper)
+        vboxSplitting = QVBoxLayout()
+        vboxSplitting.addWidget(self.splittingText)
+        vboxSplitting.addWidget(self.escalarSplitting)
+        vboxSplitting.addWidget(self.btnSplitting)
+        vboxSplitting.addStretch(1)
+        gpSplitting.setLayout(vboxSplitting)
+
+        gpQuantizacao = QGroupBox("Quantizaçao")
+        self.quantizacaoText = QLabel("Valor:")
+        self.escalarQuantizacao = QLineEdit()
+        self.btnQuantizacao = QPushButton('Quantização')
+        self.btnQuantizacao.clicked.connect(self.quantizacaoWrapper)
+        vboxQuantizacao = QVBoxLayout()
+        vboxQuantizacao.addWidget(self.quantizacaoText)
+        vboxQuantizacao.addWidget(self.escalarQuantizacao)
+        vboxQuantizacao.addWidget(self.btnQuantizacao)
+        vboxQuantizacao.addStretch(1)
+        gpQuantizacao.setLayout(vboxQuantizacao)
+
+
         gpEqualizacao = QGroupBox("Equalizacao")
         self.btnEqualizar = QPushButton('Eu vou equalizar a sua cara')
         self.btnEqualizar.clicked.connect(self.equalizarWrapper)
@@ -118,23 +143,39 @@ class MainWindow(QMainWindow):
         gpEqualizacao.setLayout(vboxEqualizacao)
 
         layout = QGridLayout()
-        layout.addWidget(self.imagemOriginal, 0, 0)
-        layout.addWidget(self.btnLoadImage, 1, 0)
-        layout.addWidget(self.histogramaOriginal, 2, 0)
-        layout.addWidget(self.imagemModificada, 0, 1)
-        layout.addWidget(self.btnResetImage, 1, 1)
-        layout.addWidget(self.histogramaModificado, 2, 1)
+        layout.addWidget(self.imagemOriginal, 0, 0, 1, 2)
+        layout.addWidget(self.btnLoadImage, 1, 0, 1, 2)
+        layout.addWidget(self.histogramaOriginal, 2, 0, 1, 2)
+        layout.addWidget(self.imagemModificada, 0, 2, 1, 2)
+        layout.addWidget(self.btnResetImage, 1, 2, 1, 2)
+        layout.addWidget(self.histogramaModificado, 2, 2, 1, 2)
 
         # Adiciona groupbox de filtros na janela
-        layout.addWidget(gpClarear, 3, 0)
-        layout.addWidget(gpEscurecer, 3, 1)
-        layout.addWidget(gpMedia, 4, 0)
-        layout.addWidget(gpMediana, 4, 1)
-        layout.addWidget(gpEqualizacao, 5, 0)
+        #layout.addWidget(gpClarear, 3, 0)
+        #layout.addWidget(gpEscurecer, 3, 1)
+        layout.addWidget(gpMedia, 3, 0)
+        layout.addWidget(gpMediana, 3, 1)
+        layout.addWidget(gpEqualizacao, 4, 0, 1, 4)
+        layout.addWidget(gpSplitting, 3, 2)
+        layout.addWidget(gpQuantizacao, 3, 3)
 
         widget = QWidget()  # Widget principal
         widget.setLayout(layout)  # define o layout a ser usado
         self.setCentralWidget(widget)
+
+    def splittingWrapper(self):
+        escalar = self.escalarSplitting.text()
+        img = readImage(FILENAMES['modified'])
+        modified = filtro_splitting(img, int(escalar))
+        self.updateModifiedImage(modified)
+        self.messageBox('Filtro aplicado!')
+
+    def quantizacaoWrapper(self):
+        escalar = self.escalarQuantizacao.text()
+        img = readImage(FILENAMES['modified'])
+        modified = filtro_quantizacao(img, int(escalar))
+        self.updateModifiedImage(modified)
+        self.messageBox('Filtro aplicado!')
 
     def clarearWrapper(self):
         """ Wrapper para o filtro clarear que
@@ -186,7 +227,7 @@ class MainWindow(QMainWindow):
         self.loadImage(filename)
 
     def loadImage(self, filename):
-        """ Funcao para carregar a imagem no 
+        """ Funcao para carregar a imagem no
         pixmap da imagem original
         """
         self.originalFilename = filename

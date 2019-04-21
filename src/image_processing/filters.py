@@ -35,13 +35,27 @@ def soma_pixel(valor_pixel, escalar):
     if soma > 255: return 255
     return soma
 
+def soma_pixel_splitting(valor_pixel, escalar):
+    if valor_pixel > 128:
+        soma = valor_pixel + escalar
+    else:
+        soma = valor_pixel - escalar
+    if soma < 0: return 0
+    if soma > 255: return 255
+    return soma
 
-def soma_escalar(img, k):
+def soma_escalar(img, k, splitting=False):
+
+    if splitting:
+        func_soma = soma_pixel
+    else:
+        func_soma = soma_pixel_splitting
+
     linhas, colunas, dimensoes = img.shape
     for linha in range(linhas):
         for coluna in range(colunas):
             img[linha, coluna] = [
-                soma_pixel(valor, k)  # soma k em cada valor do pixel
+                soma_pixel_splitting(valor, k)  # soma k em cada valor do pixel
                 for valor in img[linha, coluna]
             ]
     return img
@@ -217,15 +231,15 @@ def equalizar(img):
     qs = []
     for hist in range(len(histogramas_acumulados)):
         v_q = []
-        for idx in range(hist):
+        for idx in range(len(histogramas_acumulados[hist])):
             v_q.append(formula_magica(idx, histogramas_acumulados[hist][idx], i))
-            print(v_q)
+            #print(v_q)
         qs.append(v_q)
-    
+
     for linha in range(linhas):
         for coluna in range(colunas):
             for b in range(dimensoes):
-                print(qs[b])
+                #print(qs[b])
                 img[linha, coluna, b] = qs[b][img[linha, coluna, b]]
 
     return img
@@ -257,19 +271,18 @@ def filtro_mediana(img, neighbors='8'):
     return img
 
 
-def filtro_quantizacao(img, neighbors='8'):
-    neighborhood = NEIGHBORHOOD[neighbors]
-    # TODO: implementar o filtro
+def filtro_quantizacao(img, quantidade_cores):
+
+    intervalo = 255/quantidade_cores
+
+    linhas, colunas, dimensoes = img.shape
+    for linha in range(linhas):
+        for coluna in range(colunas):
+            novos_intervalos = [cor//intervalo for cor in img[linha, coluna]]
+            novas_cores = [i * intervalo for i in novos_intervalos]
+            img[linha, coluna] = novas_cores
     return img
 
 
-def filtro_splitting(img, neighbors='8'):
-    neighborhood = NEIGHBORHOOD[neighbors]
-    # TODO: implementar o filtro
-    return img
-
-
-def equalizacao(img, neighbors='8'):
-    neighborhood = NEIGHBORHOOD[neighbors]
-    # TODO: implementar o filtro
-    return img
+def filtro_splitting(img, constante):
+    return soma_escalar(img, constante, splitting=True)
