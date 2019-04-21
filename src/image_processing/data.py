@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 
 
 def histograma_bandas(img):
-    """ recebe uma imagem e um inteiro especificando uma banda,
-    retorna o vetor para montar o histograma daquela banda
+    """ recebe uma imagem RGB (numpy.array), retorna os vetores 
+    para montar o histograma das bandas
     """
     linhas, colunas, _ = img.shape
     r_hist = [0] * 256
@@ -17,10 +17,9 @@ def histograma_bandas(img):
     return r_hist, g_hist, b_hist
 
 
-def histogram(img, filename):
-    """ recebe uma img RGB e retorna
-    os subplots de histogramas para cada
-    banda
+def histogram(img, filename, show_log=False):
+    """ recebe uma imagem RGB (numpy.array) e salva o plot dos
+    histogramas no filename indicado
     """
     plt.style.use('bmh')
     r_hist, g_hist, b_hist = histograma_bandas(img)
