@@ -1,6 +1,6 @@
 import sys
 
-from image_processing.filters import clarear, escurecer
+from image_processing.filters import *
 from image_processing.data import histogram
 from util import img2Temp, imgClone, saveImage, readImage
 
@@ -81,6 +81,38 @@ class MainWindow(QMainWindow):
         vboxEscurecer.addStretch(1)
         gpEscurecer.setLayout(vboxEscurecer)
 
+        gpMedia = QGroupBox("Suavizacao media")
+        self.vizinhancaMediaText = QLabel("Vizinhanca:")
+        self.vizinhancaMedia = QLineEdit()
+        self.btnSuavizacaoMedia = QPushButton('Suavizacao media')
+        self.btnSuavizacaoMedia.clicked.connect(self.suavizacaoMediaWrapper)
+        vboxMedia = QVBoxLayout()
+        vboxMedia.addWidget(self.vizinhancaMediaText)
+        vboxMedia.addWidget(self.vizinhancaMedia)
+        vboxMedia.addWidget(self.btnSuavizacaoMedia)
+        vboxMedia.addStretch(1)
+        gpMedia.setLayout(vboxMedia)
+
+        gpMediana = QGroupBox("Suavizacao mediana")
+        self.vizinhancaMedianaText = QLabel("Vizinhanca:")
+        self.vizinhancaMediana = QLineEdit()
+        self.btnSuavizacaoMediana = QPushButton('Suavizacao mediana')
+        self.btnSuavizacaoMediana.clicked.connect(self.suavizacaoMedianaWrapper)
+        vboxMediana = QVBoxLayout()
+        vboxMediana.addWidget(self.vizinhancaMedianaText)
+        vboxMediana.addWidget(self.vizinhancaMediana)
+        vboxMediana.addWidget(self.btnSuavizacaoMediana)
+        vboxMediana.addStretch(1)
+        gpMediana.setLayout(vboxMediana)
+
+        gpEqualizacao = QGroupBox("Equalizacao")
+        self.btnEqualizar = QPushButton('Eu vou equalizar a sua cara')
+        self.btnEqualizar.clicked.connect(self.equalizarWrapper)
+        vboxEqualizacao = QVBoxLayout()
+        vboxEqualizacao.addWidget(self.btnEqualizar)
+        vboxEqualizacao.addStretch(1)
+        gpEqualizacao.setLayout(vboxEqualizacao)
+
         layout = QGridLayout()
         layout.addWidget(self.imagemOriginal, 0, 0)
         layout.addWidget(self.btnLoadImage, 1, 0)
@@ -92,6 +124,9 @@ class MainWindow(QMainWindow):
         # filtros:
         layout.addWidget(gpClarear, 3, 0)
         layout.addWidget(gpEscurecer, 3, 1)
+        layout.addWidget(gpMedia, 4, 0)
+        layout.addWidget(gpMediana, 4, 1)
+        layout.addWidget(gpEqualizacao, 5, 0)
 
         widget = QWidget()  # nossa widget principal
         widget.setLayout(layout)  # seta o layout a ser usado
@@ -104,10 +139,30 @@ class MainWindow(QMainWindow):
         self.updateModifiedImage(modified)
         self.messageBox('Filtro aplicado!')
 
+    def equalizarWrapper(self):
+        img = readImage(FILENAMES['modified'])
+        modified = equalizar(img)
+        self.updateModifiedImage(modified)
+        self.messageBox('Filtro aplicado!')
+
     def escurecerWrapper(self):
         escalar = self.escalarEscurecer.text()
         img = readImage(FILENAMES['modified'])
         modified = escurecer(img, int(escalar))
+        self.updateModifiedImage(modified)
+        self.messageBox('Filtro aplicado!')
+
+    def suavizacaoMediaWrapper(self):
+        vizinhanca = self.vizinhancaMedia.text()
+        img = readImage(FILENAMES['modified'])
+        modified = filtro_media_fatima  (img, vizinhanca)
+        self.updateModifiedImage(modified)
+        self.messageBox('Filtro aplicado!')
+
+    def suavizacaoMedianaWrapper(self):
+        vizinhanca = self.vizinhancaMediana.text()
+        img = readImage(FILENAMES['modified'])
+        modified = filtro_mediana_fatima(img, vizinhanca)
         self.updateModifiedImage(modified)
         self.messageBox('Filtro aplicado!')
 
