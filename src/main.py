@@ -142,6 +142,38 @@ class MainWindow(QMainWindow):
         vboxEqualizacao.addStretch(1)
         gpEqualizacao.setLayout(vboxEqualizacao)
 
+        gpGradHorizontal = QGroupBox("Gradiente Horizontal")
+        self.btnGradHorizontal = QPushButton('Aplicar filtro')
+        self.btnGradHorizontal.clicked.connect(self.gradHorizontalWrapper)
+        vboxGradHorizontal = QVBoxLayout()
+        vboxGradHorizontal.addWidget(self.btnGradHorizontal)
+        vboxGradHorizontal.addStretch(1)
+        gpGradHorizontal.setLayout(vboxGradHorizontal)
+
+        gpGradVertical = QGroupBox("Gradiente Vertical")
+        self.btnGradVertical = QPushButton('Aplicar filtro')
+        self.btnGradVertical.clicked.connect(self.gradVerticalWrapper)
+        vboxGradVertical = QVBoxLayout()
+        vboxGradVertical.addWidget(self.btnGradVertical)
+        vboxGradVertical.addStretch(1)
+        gpGradVertical.setLayout(vboxGradVertical)
+
+        gpPassaAlta = QGroupBox("Passa Alta")
+        self.btnPassaAlta = QPushButton('Aplicar filtro')
+        self.btnPassaAlta.clicked.connect(self.passaAltaWrapper)
+        vboxPassaAlta = QVBoxLayout()
+        vboxPassaAlta.addWidget(self.btnPassaAlta)
+        vboxPassaAlta.addStretch(1)
+        gpPassaAlta.setLayout(vboxPassaAlta)
+
+        gpSobel = QGroupBox("Sobel vertical + horizontal")
+        self.btnSobel = QPushButton('Aplicar filtro')
+        self.btnSobel.clicked.connect(self.sobelWrapper)
+        vboxSobel = QVBoxLayout()
+        vboxSobel.addWidget(self.btnSobel)
+        vboxSobel.addStretch(1)
+        gpSobel.setLayout(vboxSobel)
+
         layout = QGridLayout()
         layout.addWidget(self.imagemOriginal, 0, 0, 1, 2)
         layout.addWidget(self.btnLoadImage, 1, 0, 1, 2)
@@ -153,15 +185,43 @@ class MainWindow(QMainWindow):
         # Adiciona groupbox de filtros na janela
         #layout.addWidget(gpClarear, 3, 0)
         #layout.addWidget(gpEscurecer, 3, 1)
-        layout.addWidget(gpMedia, 3, 0)
-        layout.addWidget(gpMediana, 3, 1)
-        layout.addWidget(gpEqualizacao, 4, 0, 1, 4)
-        layout.addWidget(gpSplitting, 3, 2)
-        layout.addWidget(gpQuantizacao, 3, 3)
+        #layout.addWidget(gpMedia, 3, 0)
+        #layout.addWidget(gpMediana, 3, 1)
+        #layout.addWidget(gpEqualizacao, 4, 0, 1, 4)
+        #layout.addWidget(gpSplitting, 3, 2)
+        #layout.addWidget(gpQuantizacao, 3, 3)
+        layout.addWidget(gpGradHorizontal, 3, 0)
+        layout.addWidget(gpGradVertical, 3, 1)
+        layout.addWidget(gpPassaAlta, 3, 2)
+        layout.addWidget(gpSobel, 3, 3)
 
         widget = QWidget()  # Widget principal
         widget.setLayout(layout)  # define o layout a ser usado
         self.setCentralWidget(widget)
+
+    def gradHorizontalWrapper(self):
+        img = readImage(FILENAMES['modified'])
+        modified = filtro_gradiente_horizontal(img)
+        self.updateModifiedImage(modified)
+        self.messageBox('Filtro aplicado!')
+
+    def gradVerticalWrapper(self):
+        img = readImage(FILENAMES['modified'])
+        modified = filtro_gradiente_vertical(img)
+        self.updateModifiedImage(modified)
+        self.messageBox('Filtro aplicado!')
+
+    def passaAltaWrapper(self):
+        img = readImage(FILENAMES['modified'])
+        modified = filtro_passa_alta(img)
+        self.updateModifiedImage(modified)
+        self.messageBox('Filtro aplicado!')
+
+    def sobelWrapper(self):
+        img = readImage(FILENAMES['modified'])
+        modified = filtro_sobel(img)
+        self.updateModifiedImage(modified)
+        self.messageBox('Filtro aplicado!')
 
     def splittingWrapper(self):
         escalar = self.escalarSplitting.text()
