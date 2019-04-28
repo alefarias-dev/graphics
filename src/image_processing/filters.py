@@ -168,48 +168,68 @@ NEIGHBORHOOD = {
     'diag': neighbors_diag
 }
 
-def aplica_template(img, template):
+
+def aplica_template(img, template, template_size=3):
     """Dado uma imagems e um template, aplica o template nos pixels da imagem
 
     Arguments:
         img {numpy.ndarray} -- Imagem onde será aplicado o template.
-        template {numpy.ndarray} -- Templete (N, N) que será aplicado na imagem.
+        template {numpy.ndarray} -- Template (N, N) que será aplicado na imagem.
     """
+
+    if template_size == 3:
+        range_start = 1
+    elif template_size == 2:
+        range_start = 0
+    else:
+        raise ValueError("Tamanho de template não suportado.")
+
+    range_end_offset = 1
+
     img_copy = img.copy()
     linhas, colunas, dimensoes = img.shape
     template_linhas, template_colunas = template.shape
-    for linha in range(1, linhas-1):
-        for coluna in range(1, colunas-1):
-            #novo_valor = 0
+    for linha in range(range_start, linhas-range_end_offset):
+        for coluna in range(range_start, colunas-range_end_offset):
             for b in range(dimensoes):
                 novo_valor = 0
                 for linha_template in range(template_linhas):
                     for coluna_template in range(template_colunas):
                         novo_valor += template[linha_template, coluna_template] * \
-                            img[linha + linha_template - 1, coluna + coluna_template - 1, b]
+                            img[linha + linha_template - range_start, coluna + coluna_template - range_start, b]
                 img_copy[linha, coluna, b] = novo_valor
-            #img_copy[linha, coluna] = np.array([novo_valor//3] * 3)
 
     return img_copy
 
 def filtro_gradiente_horizontal(img):
     template = np.array([[-1, -1], [1, 1]])
-    return aplica_template(img, template)
+    #template = np.array([[0, 0], [0, 0]])
+    return aplica_template(img, template, template_size=2)
 
 def filtro_gradiente_vertical(img):
     template = np.array([[-1, 1], [-1, 1]])
-    return aplica_template(img, template)
+    return aplica_template(img, template, template_size=2)
 
 def filtro_passa_alta(img):
     template = np.array([[-1, -1, -1], [-1, 8, -1], [-1, -1, -1]])
+    #template = np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
     return aplica_template(img, template)
 
 def filtro_sobel(img):
     template_horizontal = np.array([[1, 0, -1], [2, 0, -2], [1, 0, -1]])
     template_vertical = np.array([[1, 2, 1], [0, 0, 0], [-1, -2, -1]])
 
-    new_image = aplica_template(img, template_horizontal) + aplica_template(img, template_vertical)
-    return new_image
+    img_horizontal = aplica_template(img, template_horizontal)
+    img_vertical =  aplica_template(img, template_vertical)
+
+    img_copy = img.copy()
+    linhas, colunas, dimensoes = img.shape
+    for linha in range(linhas):
+        for coluna in range(colunas):
+            for b in range(dimensoes):
+                img_copy[linha, coluna, b] = max(int(img_horizontal[linha, coluna, b]) + int(img_vertical[linha, coluna, b]), 255)
+
+    return img_copy
 
 def filtro_media_fatima(img, mask_size='3'):
     img_copy = img.copy()
