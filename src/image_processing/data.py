@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 
 
 def histograma_bandas(img):
-    """ recebe uma imagem RGB (numpy.array), retorna os vetores 
+    """ recebe uma imagem RGB (numpy.array), retorna os vetores
     para montar o histograma das bandas
     """
     linhas, colunas, _ = img.shape

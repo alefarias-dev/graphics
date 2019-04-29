@@ -187,17 +187,16 @@ def aplica_template(img, template, template_size=3):
     range_end_offset = 1
 
     img_copy = img.copy()
-    linhas, colunas, dimensoes = img.shape
+    linhas, colunas = img.shape
     template_linhas, template_colunas = template.shape
     for linha in range(range_start, linhas-range_end_offset):
         for coluna in range(range_start, colunas-range_end_offset):
-            for b in range(dimensoes):
-                novo_valor = 0
-                for linha_template in range(template_linhas):
-                    for coluna_template in range(template_colunas):
-                        novo_valor += template[linha_template, coluna_template] * \
-                            img[linha + linha_template - range_start, coluna + coluna_template - range_start, b]
-                img_copy[linha, coluna, b] = novo_valor
+            novo_valor = 0
+            for linha_template in range(template_linhas):
+                for coluna_template in range(template_colunas):
+                    novo_valor += template[linha_template, coluna_template] * \
+                        img[linha + linha_template - range_start, coluna + coluna_template - range_start]
+            img_copy[linha, coluna] = novo_valor
 
     return img_copy
 
@@ -223,11 +222,10 @@ def filtro_sobel(img):
     img_vertical =  aplica_template(img, template_vertical)
 
     img_copy = img.copy()
-    linhas, colunas, dimensoes = img.shape
+    linhas, colunas = img.shape
     for linha in range(linhas):
         for coluna in range(colunas):
-            for b in range(dimensoes):
-                img_copy[linha, coluna, b] = max(int(img_horizontal[linha, coluna, b]) + int(img_vertical[linha, coluna, b]), 255)
+            img_copy[linha, coluna] = min(int(img_horizontal[linha, coluna]) + int(img_vertical[linha, coluna]), 255)
 
     return img_copy
 

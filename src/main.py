@@ -2,7 +2,7 @@ import sys
 
 from image_processing.filters import *
 from image_processing.data import histogram
-from util import imgClone, saveImage, readImage
+from util import imgClone, saveImage, readImage, toGrayScale, toRGB
 
 from PySide2 import *
 from PySide2.QtWidgets import *
@@ -201,25 +201,33 @@ class MainWindow(QMainWindow):
 
     def gradHorizontalWrapper(self):
         img = readImage(FILENAMES['modified'])
-        modified = filtro_gradiente_horizontal(img)
+        modified = toGrayScale(img)
+        modified = filtro_gradiente_horizontal(modified)
+        modified = toRGB(modified)
         self.updateModifiedImage(modified)
         self.messageBox('Filtro aplicado!')
 
     def gradVerticalWrapper(self):
         img = readImage(FILENAMES['modified'])
-        modified = filtro_gradiente_vertical(img)
+        modified = toGrayScale(img)
+        modified = filtro_gradiente_vertical(modified)
+        modified = toRGB(modified)
         self.updateModifiedImage(modified)
         self.messageBox('Filtro aplicado!')
 
     def passaAltaWrapper(self):
         img = readImage(FILENAMES['modified'])
-        modified = filtro_passa_alta(img)
+        modified = toGrayScale(img)
+        modified = filtro_passa_alta(modified)
+        modified = toRGB(modified)
         self.updateModifiedImage(modified)
         self.messageBox('Filtro aplicado!')
 
     def sobelWrapper(self):
         img = readImage(FILENAMES['modified'])
-        modified = filtro_sobel(img)
+        modified = toGrayScale(img)
+        modified = filtro_sobel(modified)
+        modified = toRGB(modified)
         self.updateModifiedImage(modified)
         self.messageBox('Filtro aplicado!')
 

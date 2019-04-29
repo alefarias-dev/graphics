@@ -18,3 +18,9 @@ def readImage(filename):
     """ Retorna a matriz RGB da imagem filename
     """
     return cv2.cvtColor(cv2.imread(filename), cv2.COLOR_BGR2RGB)
+
+def toGrayScale(img):
+    return cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+
+def toRGB(img):
+    return cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
