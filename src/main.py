@@ -133,7 +133,6 @@ class MainWindow(QMainWindow):
         vboxQuantizacao.addStretch(1)
         gpQuantizacao.setLayout(vboxQuantizacao)
 
-
         gpEqualizacao = QGroupBox("Equalizacao")
         self.btnEqualizar = QPushButton('Eu vou equalizar a sua cara')
         self.btnEqualizar.clicked.connect(self.equalizarWrapper)

@@ -3,26 +3,11 @@ import math
 from .data import histograma_bandas
 
 
-"""
-Importante!
-
-Considere a representacao da imagem como se segue:
-
-A imagem eh uma lista de listas, cada lista interna eh uma linha
-cada linha possui diferentes listas para cada pixel da imagem, a
-quantidade de listas dentro de uma linha eh a quantidade de colunas
-da imagem bidimensional. Logo, uma imagem toda preta seria representada
-do seguinte modo:
-[
-    [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
-    [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
-    [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
-    [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
-    [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
-]
-
-A principio assuma que todos os filtros recebem uma imagem RGB
-"""
+NEIGHBORHOOD = {
+    '8': neighbors_8,
+    '4': neighbors_4,
+    'diag': neighbors_diag
+}
 
 
 def soma_pixel(valor_pixel, escalar):
@@ -35,6 +20,7 @@ def soma_pixel(valor_pixel, escalar):
     if soma > 255: return 255
     return soma
 
+
 def soma_pixel_splitting(valor_pixel, escalar):
     if valor_pixel > 128:
         soma = valor_pixel + escalar
@@ -43,6 +29,7 @@ def soma_pixel_splitting(valor_pixel, escalar):
     if soma < 0: return 0
     if soma > 255: return 255
     return soma
+
 
 def soma_escalar(img, k, splitting=False):
 
@@ -74,32 +61,6 @@ def escurecer(img, k):
     """
     return soma_escalar(img, -k)
 
-
-"""
-
-Implementacao de filtros
-
-Suavizacao
-- Filtro de media
-- Filtro de mediana
-
-Realce
-- Filtro de quanticacao
-- Filtro Splitting
-- Equalizacao
-
-"""
-
-
-"""
-
-Algoritmos de vizinhanca
-
-- Vizinhanca de 8
-- Vizinhanca de 4
-- Vizinhanca diagonal
-
-"""
 
 def valid_positions(positions, img_shape):
     linhas, colunas, dimensoes = img_shape
@@ -162,13 +123,6 @@ def neighbors_diag(img, i, j, b):
     return neighbors
 
 
-NEIGHBORHOOD = {
-    '8': neighbors_8,
-    '4': neighbors_4,
-    'diag': neighbors_diag
-}
-
-
 def aplica_template(img, template, template_size=3):
     """Dado uma imagems e um template, aplica o template nos pixels da imagem
 
@@ -200,19 +154,23 @@ def aplica_template(img, template, template_size=3):
 
     return img_copy
 
+
 def filtro_gradiente_horizontal(img):
     template = np.array([[-1, -1], [1, 1]])
     #template = np.array([[0, 0], [0, 0]])
     return aplica_template(img, template, template_size=2)
 
+
 def filtro_gradiente_vertical(img):
     template = np.array([[-1, 1], [-1, 1]])
     return aplica_template(img, template, template_size=2)
+
 
 def filtro_passa_alta(img):
     template = np.array([[-1, -1, -1], [-1, 8, -1], [-1, -1, -1]])
     #template = np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
     return aplica_template(img, template)
+
 
 def filtro_sobel(img):
     template_horizontal = np.array([[1, 0, -1], [2, 0, -2], [1, 0, -1]])
@@ -228,6 +186,7 @@ def filtro_sobel(img):
             img_copy[linha, coluna] = min(int(img_horizontal[linha, coluna]) + int(img_vertical[linha, coluna]), 255)
 
     return img_copy
+
 
 def filtro_media_fatima(img, mask_size='3'):
     img_copy = img.copy()
@@ -279,7 +238,6 @@ def hist_acc(v):
 
 def formula_magica(idx, hist_idx, i):
     return max(0, (hist_idx/i)-1)
-
 
 
 def equalizar(img):
