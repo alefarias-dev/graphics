@@ -173,6 +173,17 @@ class MainWindow(QMainWindow):
         vboxSobel.addStretch(1)
         gpSobel.setLayout(vboxSobel)
 
+        gpLimiar = QGroupBox("Limiarização")
+        self.LimiarText = QLabel("limiar:")
+        self.escalarLimiar = QLineEdit()
+        self.btnLimiar = QPushButton('Limiar')
+        self.btnLimiar.clicked.connect(self.limiarWrapper)
+        vboxLimiar = QVBoxLayout()
+        vboxLimiar.addWidget(self.LimiarText)
+        vboxLimiar.addWidget(self.escalarLimiar)
+        vboxLimiar.addWidget(self.btnLimiar)
+        gpLimiar.setLayout(vboxLimiar)
+
         layout = QGridLayout()
         layout.addWidget(self.imagemOriginal, 0, 0, 1, 2)
         layout.addWidget(self.btnLoadImage, 1, 0, 1, 2)
@@ -180,6 +191,24 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.imagemModificada, 0, 2, 1, 2)
         layout.addWidget(self.btnResetImage, 1, 2, 1, 2)
         layout.addWidget(self.histogramaModificado, 2, 2, 1, 2)
+
+        gpLimiarAdaptativo = QGroupBox("Limiar adaptativo")
+        self.btnLimiarAdaptativo = QPushButton('Aplicar filtro')
+        self.btnLimiarAdaptativo.clicked.connect(self.limiarAdaptativoWrapper)
+        vboxLimiarAdaptativo = QVBoxLayout()
+        vboxLimiarAdaptativo.addWidget(self.btnLimiarAdaptativo)
+        vboxLimiarAdaptativo.addStretch(1)
+        gpLimiarAdaptativo.setLayout(vboxLimiarAdaptativo)
+
+        gpLimiarLocal = QGroupBox("Limiar local")
+        self.btnLimiarLocal = QPushButton('Aplicar filtro')
+        self.escalarLimiarLocal = QLineEdit()
+        self.btnLimiarLocal.clicked.connect(self.limiarLocalWrapper)
+        vboxLimiarLocal = QVBoxLayout()
+        vboxLimiarLocal.addWidget(self.btnLimiarLocal)
+        vboxLimiarLocal.addWidget(self.escalarLimiarLocal)
+        vboxLimiarLocal.addStretch(1)
+        gpLimiarLocal.setLayout(vboxLimiarLocal)
 
         # Adiciona groupbox de filtros na janela
         #layout.addWidget(gpClarear, 3, 0)
@@ -189,14 +218,43 @@ class MainWindow(QMainWindow):
         #layout.addWidget(gpEqualizacao, 4, 0, 1, 4)
         #layout.addWidget(gpSplitting, 3, 2)
         #layout.addWidget(gpQuantizacao, 3, 3)
-        layout.addWidget(gpGradHorizontal, 3, 0)
-        layout.addWidget(gpGradVertical, 3, 1)
-        layout.addWidget(gpPassaAlta, 3, 2)
-        layout.addWidget(gpSobel, 3, 3)
+        # layout.addWidget(gpGradHorizontal, 3, 0)
+        # layout.addWidget(gpGradVertical, 3, 1)
+        # layout.addWidget(gpPassaAlta, 3, 2)
+        # layout.addWidget(gpSobel, 3, 3)
+        layout.addWidget(gpLimiar, 3, 0)
+        layout.addWidget(gpLimiarAdaptativo, 3, 1)
+        layout.addWidget(gpLimiarLocal, 3, 2)
 
         widget = QWidget()  # Widget principal
         widget.setLayout(layout)  # define o layout a ser usado
         self.setCentralWidget(widget)
+
+    def limiarLocalWrapper(self):
+        k = float(self.escalarLimiarLocal.text())
+        img = readImage(FILENAMES['modified'])
+        modified = toGrayScale(img)
+        modified = limiar_local(modified, k)
+        modified = toRGB(modified)
+        self.updateModifiedImage(modified)
+        self.messageBox('Filtro aplicado!')
+
+    def limiarWrapper(self):
+        t = int(self.escalarLimiar.text())
+        img = readImage(FILENAMES['modified'])
+        modified = toGrayScale(img)
+        modified = limiarizacao(modified, t)
+        modified = toRGB(modified)
+        self.updateModifiedImage(modified)
+        self.messageBox('Filtro aplicado!')
+    
+    def limiarAdaptativoWrapper(self):
+        img = readImage(FILENAMES['modified'])
+        modified = toGrayScale(img)
+        modified = limiar_adaptativo(modified)
+        modified = toRGB(modified)
+        self.updateModifiedImage(modified)
+        self.messageBox('Filtro aplicado!')
 
     def gradHorizontalWrapper(self):
         img = readImage(FILENAMES['modified'])

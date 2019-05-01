@@ -17,6 +17,18 @@ def histograma_bandas(img):
     return r_hist, g_hist, b_hist
 
 
+def histograma_cinza(img):
+    """ recebe uma imagem RGB (numpy.array), retorna os vetores
+    para montar o histograma das bandas
+    """
+    linhas, colunas = img.shape
+    r_hist = [0] * 256
+    for linha in range(linhas):
+        for coluna in range(colunas):
+            r_hist[img[linha, coluna]] += 1
+    return r_hist
+
+
 def histogram(img, filename, show_log=False):
     """ recebe uma imagem RGB (numpy.array) e salva o plot dos
     histogramas no filename indicado

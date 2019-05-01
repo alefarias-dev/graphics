@@ -1,13 +1,6 @@
 import numpy as np
 import math
-from .data import histograma_bandas
-
-
-NEIGHBORHOOD = {
-    '8': neighbors_8,
-    '4': neighbors_4,
-    'diag': neighbors_diag
-}
+from .data import histograma_bandas, histograma_cinza
 
 
 def soma_pixel(valor_pixel, escalar):
@@ -42,7 +35,7 @@ def soma_escalar(img, k, splitting=False):
     for linha in range(linhas):
         for coluna in range(colunas):
             img[linha, coluna] = [
-                soma_pixel_splitting(valor, k)  # soma k em cada valor do pixel
+                func_soma(valor, k)  # soma k em cada valor do pixel
                 for valor in img[linha, coluna]
             ]
     return img
@@ -63,7 +56,7 @@ def escurecer(img, k):
 
 
 def valid_positions(positions, img_shape):
-    linhas, colunas, dimensoes = img_shape
+    linhas, colunas = img_shape[0:2]
     valid_positions = []
     for position in positions:
         linha, coluna = position
@@ -73,11 +66,11 @@ def valid_positions(positions, img_shape):
 
 
 def valid_position(i, j, img_shape):
-    linhas, colunas, _ = img_shape
+    linhas, colunas = img_shape[0:2]
     return (0 <= i < linhas and 0 <= j < colunas)
 
 
-def neighbors_8(img, i, j, b):
+def neighbors_8(img, i, j, b=None):
     """ retorna arranjo de valores dos pixeis
     na neighbors de 8
     """
@@ -89,7 +82,8 @@ def neighbors_8(img, i, j, b):
     neighbors = []
     for position in positions:
         linha, coluna = position
-        neighbors.append(img[linha, coluna, b])
+        if b: neighbors.append(img[linha, coluna, b])
+        else: neighbors.append(img[linha, coluna])
     return neighbors
 
 
@@ -123,12 +117,21 @@ def neighbors_diag(img, i, j, b):
     return neighbors
 
 
+NEIGHBORHOOD = {
+    '8': neighbors_8,
+    '4': neighbors_4,
+    'diag': neighbors_diag
+}
+
 def aplica_template(img, template, template_size=3):
     """Dado uma imagems e um template, aplica o template nos pixels da imagem
 
     Arguments:
         img {numpy.ndarray} -- Imagem onde será aplicado o template.
         template {numpy.ndarray} -- Template (N, N) que será aplicado na imagem.
+
+    Return:
+        img_coph {numpy.ndarray} -- Imagem 
     """
 
     if template_size == 3:
@@ -304,3 +307,37 @@ def filtro_quantizacao(img, quantidade_cores):
 
 def filtro_splitting(img, constante):
     return soma_escalar(img, constante, splitting=True)
+
+
+def limiarizacao(img, t):
+    linhas, colunas = img.shape
+    for linha in range(linhas):
+        for coluna in range(colunas):
+            img[linha, coluna] = 0 if img[linha, coluna] < t else 255
+    return img
+
+def limiar_adaptativo(img):
+    hist = histograma_cinza(img)
+    ponto_inflexao = get_ponto_inflexao(hist)
+    return limiarizacao(img, ponto_inflexao)
+
+def get_ponto_inflexao(h):
+    anterior = h[0]
+    menor_atual = float('Inf')
+    ponto_inflexao = 0
+    for index, value in enumerate(h[1::]):
+        if value > anterior and menor_atual > anterior:
+            menor_atual = anterior
+            ponto_inflexao = index - 1
+    return ponto_inflexao
+
+def limiar_local(img, k):
+    linhas, colunas = img.shape
+    for linha in range(linhas):
+        for coluna in range(colunas):
+            vizinhos = neighbors_8(img, linha, coluna)
+            media_vizinhos = sum(vizinhos)/len(vizinhos)
+            pixel = img[linha, coluna]
+            t = media_vizinhos * k
+            img[linha, coluna] = 255 if pixel >= t else 0
+    return img
