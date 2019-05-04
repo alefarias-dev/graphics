@@ -121,10 +121,10 @@ class MainWindow(QMainWindow):
         vboxSplitting.addStretch(1)
         gpSplitting.setLayout(vboxSplitting)
 
-        gpQuantizacao = QGroupBox("Quantizaçao")
+        gpQuantizacao = QGroupBox("Quantizacao")
         self.quantizacaoText = QLabel("Valor:")
         self.escalarQuantizacao = QLineEdit()
-        self.btnQuantizacao = QPushButton('Quantização')
+        self.btnQuantizacao = QPushButton('Quantizacao')
         self.btnQuantizacao.clicked.connect(self.quantizacaoWrapper)
         vboxQuantizacao = QVBoxLayout()
         vboxQuantizacao.addWidget(self.quantizacaoText)
@@ -159,8 +159,10 @@ class MainWindow(QMainWindow):
 
         gpPassaAlta = QGroupBox("Passa Alta")
         self.btnPassaAlta = QPushButton('Aplicar filtro')
+        self.escalarPassaAlta = QLineEdit()
         self.btnPassaAlta.clicked.connect(self.passaAltaWrapper)
         vboxPassaAlta = QVBoxLayout()
+        vboxPassaAlta.addWidget(self.escalarPassaAlta)
         vboxPassaAlta.addWidget(self.btnPassaAlta)
         vboxPassaAlta.addStretch(1)
         gpPassaAlta.setLayout(vboxPassaAlta)
@@ -173,15 +175,14 @@ class MainWindow(QMainWindow):
         vboxSobel.addStretch(1)
         gpSobel.setLayout(vboxSobel)
 
-        gpLimiar = QGroupBox("Limiarização")
-        self.LimiarText = QLabel("limiar:")
+        gpLimiar = QGroupBox("Limiarizacao")
         self.escalarLimiar = QLineEdit()
         self.btnLimiar = QPushButton('Limiar')
         self.btnLimiar.clicked.connect(self.limiarWrapper)
         vboxLimiar = QVBoxLayout()
-        vboxLimiar.addWidget(self.LimiarText)
         vboxLimiar.addWidget(self.escalarLimiar)
         vboxLimiar.addWidget(self.btnLimiar)
+        vboxLimiar.addStretch(1)
         gpLimiar.setLayout(vboxLimiar)
 
         layout = QGridLayout()
@@ -205,10 +206,20 @@ class MainWindow(QMainWindow):
         self.escalarLimiarLocal = QLineEdit()
         self.btnLimiarLocal.clicked.connect(self.limiarLocalWrapper)
         vboxLimiarLocal = QVBoxLayout()
-        vboxLimiarLocal.addWidget(self.btnLimiarLocal)
         vboxLimiarLocal.addWidget(self.escalarLimiarLocal)
+        vboxLimiarLocal.addWidget(self.btnLimiarLocal)
         vboxLimiarLocal.addStretch(1)
         gpLimiarLocal.setLayout(vboxLimiarLocal)
+
+        gpDirecaoReta = QGroupBox("Direcao Reta")
+        self.btnDirecaoReta = QPushButton('Detectar direcao')
+        self.escalarDirecaoReta = QLineEdit()
+        self.btnDirecaoReta.clicked.connect(self.direcaoRetaWrapper)
+        vboxDirecaoReta = QVBoxLayout()
+        vboxDirecaoReta.addWidget(self.escalarDirecaoReta)
+        vboxDirecaoReta.addWidget(self.btnDirecaoReta)
+        vboxDirecaoReta.addStretch(1)
+        gpDirecaoReta.setLayout(vboxDirecaoReta)
 
         # Adiciona groupbox de filtros na janela
         #layout.addWidget(gpClarear, 3, 0)
@@ -218,17 +229,28 @@ class MainWindow(QMainWindow):
         #layout.addWidget(gpEqualizacao, 4, 0, 1, 4)
         #layout.addWidget(gpSplitting, 3, 2)
         #layout.addWidget(gpQuantizacao, 3, 3)
-        # layout.addWidget(gpGradHorizontal, 3, 0)
-        # layout.addWidget(gpGradVertical, 3, 1)
-        # layout.addWidget(gpPassaAlta, 3, 2)
-        # layout.addWidget(gpSobel, 3, 3)
+        #layout.addWidget(gpGradHorizontal, 3, 0)
+        #layout.addWidget(gpGradVertical, 3, 1)
+        #layout.addWidget(gpSobel, 3, 2)
+        #layout.addWidget(gpPassaAlta, 3, 3)
         layout.addWidget(gpLimiar, 3, 0)
         layout.addWidget(gpLimiarAdaptativo, 3, 1)
         layout.addWidget(gpLimiarLocal, 3, 2)
+        layout.addWidget(gpPassaAlta, 3, 3)
+        layout.addWidget(gpDirecaoReta, 3, 4)
 
         widget = QWidget()  # Widget principal
         widget.setLayout(layout)  # define o layout a ser usado
         self.setCentralWidget(widget)
+
+    def direcaoRetaWrapper(self):
+        k = float(self.escalarDirecaoReta.text())
+        img = readImage(FILENAMES['modified'])
+        modified = toGrayScale(img)
+        modified, direcao = filtro_direcao_reta(modified, k)
+        modified = toRGB(modified)
+        self.updateModifiedImage(modified)
+        self.messageBox('A linha é ' + direcao)
 
     def limiarLocalWrapper(self):
         k = float(self.escalarLimiarLocal.text())
@@ -247,7 +269,7 @@ class MainWindow(QMainWindow):
         modified = toRGB(modified)
         self.updateModifiedImage(modified)
         self.messageBox('Filtro aplicado!')
-    
+
     def limiarAdaptativoWrapper(self):
         img = readImage(FILENAMES['modified'])
         modified = toGrayScale(img)
@@ -274,8 +296,9 @@ class MainWindow(QMainWindow):
 
     def passaAltaWrapper(self):
         img = readImage(FILENAMES['modified'])
+        escalar = int(self.escalarPassaAlta.text())
         modified = toGrayScale(img)
-        modified = filtro_passa_alta(modified)
+        modified = filtro_passa_alta(modified, escalar)
         modified = toRGB(modified)
         self.updateModifiedImage(modified)
         self.messageBox('Filtro aplicado!')

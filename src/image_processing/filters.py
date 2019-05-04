@@ -123,15 +123,17 @@ NEIGHBORHOOD = {
     'diag': neighbors_diag
 }
 
-def aplica_template(img, template, template_size=3):
+def aplica_template(img, template, template_size=3, t=0, count_r=False):
     """Dado uma imagems e um template, aplica o template nos pixels da imagem
 
     Arguments:
-        img {numpy.ndarray} -- Imagem onde será aplicado o template.
-        template {numpy.ndarray} -- Template (N, N) que será aplicado na imagem.
+        img {numpy.ndarray} -- Imagem onde sera aplicado o template.
+        template {numpy.ndarray} -- Template (N, N) que sera aplicado na imagem.
+        t {int} -- Valor de threshold para limitar template
 
     Return:
-        img_coph {numpy.ndarray} -- Imagem 
+        img_coph {numpy.ndarray} -- Imagem
+        counter {int} -- |R|
     """
 
     if template_size == 3:
@@ -139,10 +141,10 @@ def aplica_template(img, template, template_size=3):
     elif template_size == 2:
         range_start = 0
     else:
-        raise ValueError("Tamanho de template não suportado.")
+        raise ValueError("Tamanho de template nao suportado.")
 
     range_end_offset = 1
-
+    counter = 0
     img_copy = img.copy()
     linhas, colunas = img.shape
     template_linhas, template_colunas = template.shape
@@ -153,9 +155,37 @@ def aplica_template(img, template, template_size=3):
                 for coluna_template in range(template_colunas):
                     novo_valor += template[linha_template, coluna_template] * \
                         img[linha + linha_template - range_start, coluna + coluna_template - range_start]
-            img_copy[linha, coluna] = novo_valor
 
-    return img_copy
+            if novo_valor < 0:
+                novo_valor = 0
+            elif novo_valor > 255:
+                novo_valor = 255
+
+            counter += 1 if count_r and novo_valor > t else 0
+            img_copy[linha, coluna] = novo_valor if novo_valor > t else 0
+
+    if count_r:
+        return img_copy, counter
+    else:
+        return img_copy
+
+def filtro_direcao_reta(img, t):
+    template_horizontal = np.array([[-1, -1, -1], [2, 2, 2], [-1, -1, -1]])
+    template_vertical = np.array([[-1, 2, -1], [-1, 2, -1], [-1, 2, -1]])
+    template_45 = np.array([[-1, -1, 2], [-1, 2, -1], [2, -1, -1]])
+    template_minus_45 = np.array([[2, -1, -1], [-1, 2, -1], [-1, -1, 2]])
+
+    img_h, R_h = aplica_template(img, template_horizontal, t=t, count_r=True)
+    img_v, R_v = aplica_template(img, template_vertical, t=t, count_r=True)
+    img_45, R_45 = aplica_template(img, template_45, t=t, count_r=True)
+    img_minus45, R_minus45 = aplica_template(img, template_minus_45, t=t, count_r=True)
+
+    direcao = ["Horizontal", "Vertical", "45°", "-45°"]
+    imgs = [img_h, img_v, img_45, img_minus45]
+    R_filters = [R_h, R_v, R_45, R_minus45]
+    idx_filtro = np.argmax(R_filters)
+
+    return imgs[idx_filtro], direcao[idx_filtro]
 
 
 def filtro_gradiente_horizontal(img):
@@ -169,10 +199,10 @@ def filtro_gradiente_vertical(img):
     return aplica_template(img, template, template_size=2)
 
 
-def filtro_passa_alta(img):
+def filtro_passa_alta(img, t):
     template = np.array([[-1, -1, -1], [-1, 8, -1], [-1, -1, -1]])
     #template = np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
-    return aplica_template(img, template)
+    return aplica_template(img, template, t=t)
 
 
 def filtro_sobel(img):
